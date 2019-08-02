@@ -9,9 +9,9 @@ import com.atguigu.gulimall.commons.bean.QueryCondition;
 /**
  * 商品评价回复关系
  *
- * @author leifengyang
- * @email lfy@atguigu.com
- * @date 2019-08-01 21:01:31
+ * @author thw
+ * @email thwjava@163.com
+ * @date 2019-08-02 08:28:55
  */
 public interface CommentReplayService extends IService<CommentReplayEntity> {
 

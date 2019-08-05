@@ -9,11 +9,14 @@
     <description>谷粒商城</description>
     <packaging>pom</packaging>
 
+
+
     <modules>
         <module>guli-generator</module>
         <module>gulimall-core</module>
         <module>gulimall-admin</module>
     </modules>
+
 
 
 

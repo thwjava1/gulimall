@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.pms.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -10,6 +11,7 @@ import com.atguigu.gulimall.commons.bean.Resp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +34,24 @@ import com.atguigu.gulimall.pms.service.CategoryService;
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
+
+    //ms/category/list/children/tree/2?t=156484995550
+
+    @ApiOperation("获取指定分类的子分类")
+    @GetMapping("/list/children/tree/{catId}")
+    public Resp<Object> listChildrenTree(@PathVariable("catId") Integer catId){
+
+        List<CategoryEntity>  list =  categoryService.getCategoryChildrensById(catId);
+        return Resp.ok(list);
+    }
+
+    @ApiOperation("获取等级下的所有分类数据")
+    @GetMapping("/list/tree")
+    public Resp<Object> getListTree(@RequestParam(value = "level") Integer level){
+
+       List<CategoryEntity>  list =  categoryService.getCategoryByLevel(level);
+        return Resp.ok(list);
+    }
 
     /**
      * 列表

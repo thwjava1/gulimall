@@ -17,9 +17,13 @@
         <mybatisplus.version>3.0.7.1</mybatisplus.version>
         <mysql.version>5.1.47</mysql.version>
         <swagger.version>2.9.2</swagger.version>
+
+
     </properties>
 
     <dependencies>
+
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>

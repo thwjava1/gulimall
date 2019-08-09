@@ -43,6 +43,7 @@ public class AttrGroupController {
     @Autowired
     private AttrAttrgroupRelationService relationService;
 
+
     @Autowired
     private AttrService attrService;
 
@@ -68,6 +69,13 @@ public class AttrGroupController {
             attrIds.add(attrId);
         });
 
+//        for (Object attrId : attrIds) {
+//
+//        }
+//
+//        attrIds.forEach(item->{
+//            //
+//        });
 
         List<AttrEntity> attrs = attrService.list(new QueryWrapper<AttrEntity>().eq("attr_id", attrIds));
 

@@ -1,7 +1,11 @@
 package com.atguigu.gulimall.pms.service.impl;
 
 import com.atguigu.gulimall.pms.dao.AttrAttrgroupRelationDao;
+import com.atguigu.gulimall.pms.dao.AttrDao;
 import com.atguigu.gulimall.pms.entity.AttrAttrgroupRelationEntity;
+import com.atguigu.gulimall.pms.entity.AttrEntity;
+import com.atguigu.gulimall.pms.vo.AttrGroupWithAttrsVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -15,14 +19,21 @@ import com.atguigu.gulimall.pms.dao.AttrGroupDao;
 import com.atguigu.gulimall.pms.entity.AttrGroupEntity;
 import com.atguigu.gulimall.pms.service.AttrGroupService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
 
     @Autowired
     private AttrAttrgroupRelationDao relationDao;
+
     @Autowired
     private AttrGroupDao attrGroupDao;
+
+    @Autowired
+    AttrDao attrDao;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -49,7 +60,45 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         //这个方法重写了 自己的方法
         IPage<AttrGroupEntity> data = this.page(page, wrapper);
 
-        return new PageVo(data);//封装的vo类
+        //查出的所有分组
+        List<AttrGroupEntity> records = data.getRecords();
+        //查询每一个分组的所有属性  //分组的个数records.size()
+        //将要返回出去的带分组信息以及他的属性的对象
+        List<AttrGroupWithAttrsVo> groupWithAttrs = new ArrayList<AttrGroupWithAttrsVo>(records.size());
+
+        for (AttrGroupEntity record : records) {//分组的信息
+            //创建 一个attrGroupWithAttrsVo 准备收集所有数据
+            AttrGroupWithAttrsVo attrGroupWithAttrsVo = new AttrGroupWithAttrsVo();
+            BeanUtils.copyProperties("record",attrGroupWithAttrsVo);//把分组的信息 拷贝到vo中
+
+
+            //当前分组的ID
+            Long groupId = record.getAttrGroupId();
+            //获取当前分组的所有属性  怎么知道当前分组的所有属性是多少  分组和表有关系 查到
+            //先用关联关系 查出哪些分组都关联了哪些属性  用 attr_group_id  与 查出的分组ID 进行对比
+            List<AttrAttrgroupRelationEntity> relationEntities = relationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", groupId));
+
+            if (relationEntities != null && relationEntities.size()>0){
+
+
+                //对这些属性 进行遍历 查出每个分组的id
+                ArrayList<Long> attrIds = new ArrayList<>();
+                for (AttrAttrgroupRelationEntity entity : relationEntities) {
+                    attrIds.add(entity.getAttrId());
+                }
+                //查出当前分组所有真正的属性  in 把查到的主键 attr_id 放到  attrIds集合中  返回集合 attr的全部数据
+                List<AttrEntity> attrEntities = attrDao.selectList(new QueryWrapper<AttrEntity>().in("attr_id", attrIds));
+
+                //把attr的数据 放到 vo中
+                attrGroupWithAttrsVo.setAttrEntities(attrEntities);
+            }
+
+            //把vo放到集合中
+            groupWithAttrs.add(attrGroupWithAttrsVo);
+
+        }
+
+        return new PageVo(groupWithAttrs,data.getTotal(),data.getSize(),data.getCurrent());//封装的vo类
     }
 
     @Override

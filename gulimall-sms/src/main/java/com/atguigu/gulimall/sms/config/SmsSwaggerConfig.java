@@ -15,10 +15,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SmsSwaggerConfig {
 
-    @Bean("销售平台")
+    @Bean("营销优惠平台")
     public Docket userApis() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("销售平台")
+                .groupName("营销优惠平台")
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                 .paths(PathSelectors.regex("/sms.*"))
@@ -29,8 +29,8 @@ public class SmsSwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("谷粒商城-销售平台接口文档")
-                .description("提供销售平台的文档")
+                .title("谷粒商城-营销优惠平台接口文档")
+                .description("提供营销优惠平台的文档")
                 .termsOfServiceUrl("http://www.atguigu.com/")
                 .version("1.0")
                 .build();
